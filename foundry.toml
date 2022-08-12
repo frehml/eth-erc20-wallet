@@ -2,11 +2,10 @@
 src = 'src'
 out = 'out'
 libs = ['lib']
-sender = '0x00a329c0648769A73afAc7F9381E08FB43dBEA72'
 
 remappings = [
     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
-    "contracts=src/contracts"
+    "contracts=src"
 ]
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

@@ -16,6 +16,7 @@ contract Wallet {
         algo = payable(_algo);
     }
 
+    // Before calling this function, approve this contract to transfer
     function depositToken(address token, uint256 _amount) public payable {
         IERC20(token).transferFrom(msg.sender, address(this), _amount);
     }
@@ -35,7 +36,7 @@ contract Wallet {
         address payable _to,
         uint256 _amount
     ) public onlyAlgo isWhitelisted(_to) {
-        IERC20(token).transferFrom(address(this), _to, _amount);
+        IERC20(token).transfer(_to, _amount);
     }
 
     // Function to deposit Ether into this contract.
@@ -65,43 +66,52 @@ contract Wallet {
         require(success, "Failed to send Ether");
     }
 
+    // Admin setter only callable by admin
     function setAdmin(address payable _admin) public onlyAdmin {
         admin = _admin;
     }
 
+    // Algo setter only callable by admin
     function setAlgo(address payable _algo) public onlyAdmin {
         algo = _algo;
     }
 
+    // Function to whitelist a single address
     function whitelistAddress(address addy) public onlyAdmin {
         whitelisted[addy] = true;
     }
 
+    // Function to whitelist multiple addresses
     function whitelistAddresses(address[] calldata addys) public onlyAdmin {
         for (uint256 i = 0; i < addys.length; i++) {
             whitelisted[addys[i]] = true;
         }
     }
 
+    // Checkcs if msg.sender is admin
     modifier onlyAdmin() {
         require(msg.sender == admin, "Not admin");
         _;
     }
 
+    // Checkcs if msg.sender is algo
     modifier onlyAlgo() {
         require(msg.sender == algo, "Not algo");
         _;
     }
 
+    // Checkcs address is whitelisted
     modifier isWhitelisted(address addy) {
         require(whitelisted[addy], "Not whitelisted");
         _;
     }
 
+    // Returns ETH balance of this contract
     function getEthBalance() external view returns (uint256) {
         return address(this).balance;
     }
 
+    // Returns token balance of this contract
     function getTokenBalance(address token) external view returns (uint256) {
         return IERC20(token).balanceOf(address(this));
     }
